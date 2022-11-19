@@ -1,0 +1,37 @@
+version: "3"
+services:
+  app-front-end:
+    build: charllenger-front/.
+    container_name: front-end-ui
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+    links:
+      - api
+  api:
+    container_name: charllenger-back-end-Api
+    build: Full-Stack-charlenger-API/.
+
+    volumes:
+      - ./src:/app/src
+    expose:
+      - 3001
+    ports:
+      - 3001:3001
+    depends_on:
+      - db
+    command: bash -c 'yarn migration:run && yarn dev'
+    links:
+      - db
+
+  db:
+    container_name: charllenger-Api-postgres
+
+    image: "postgres"
+    env_file:
+      - Full-Stack-charlenger-API/.env
+    expose:
+      - 5432
+    ports:
+      - 5432:5432
